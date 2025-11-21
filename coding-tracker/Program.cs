@@ -1,17 +1,19 @@
 ﻿using Microsoft.Data.Sqlite;
+using Dapper;
+using System.Configuration;
+using System.Collections.Specialized;
+using static coding_tracker.DatabaseManager;
 
-namespace coding_tracker
+
+    namespace coding_tracker
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            string connectionString = "Data Source=coding_tracker.db";
+            CreateDatabase();
 
-            using (var connection = new SqliteConnection(connectionString))
-            {
-                connection.Open();
-            }
+
         }
     }
 }
