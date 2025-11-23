@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using System.Globalization;
+using Spectre.Console;
 
 namespace coding_tracker
 {
@@ -14,22 +15,45 @@ namespace coding_tracker
 
         internal void AddSession()
         {
-            DateTime result;
+            DateTime? startTime = null;
+            DateTime? endTime = null;
+
             // Implementation for adding a coding session
-            Console.WriteLine("Adding a coding session. Please input the start date and time of the session (YYYY-MM-DD HH:MM):");
-            bool success = DateTime.TryParseExact( // Try to parse the date exactly
-                Console.ReadLine(), // User input
+            while (startTime == null)
+            {
+                AnsiConsole.MarkupLine("Adding a coding session. Please input the [green]start date[/] and [cyan]time[/] of the session (YYYY-MM-DD HH:MM):");
+                AnsiConsole.MarkupLine("Type [red]0[/] to go back to the main menu");
+                startTime = ParseDateTime(AnsiConsole.Ask<string>("Start Date and Time: "));
+            }
+
+            while(endTime == null)
+            {
+                AnsiConsole.MarkupLine("Please input the [green]end date[/] and [cyan]time[/] of the session (YYYY-MM-DD HH:MM):");
+                AnsiConsole.MarkupLine("Type [red]0[/] to go back to the main menu");
+                endTime = ParseDateTime(AnsiConsole.Ask<string>("End Date and Time: "));
+            }
+        }
+
+        internal DateTime? ParseDateTime(string input)
+        {
+            DateTime parsedDateTime;
+            bool success = DateTime.TryParseExact(
+                input, // User input
                 dateTimeFormat, // Expected format
                 CultureInfo.InvariantCulture, // Culture info
                 DateTimeStyles.None, // No special styles
-                out result // Output variable
+                out parsedDateTime // Output variable
             );
-
-            if(!success)
+            if (!success)
             {
                 Console.WriteLine("Invalid date and time format. Please use YYYY-MM-DD HH:MM.");
-                return;
+                return null;
             }
+            return parsedDateTime;
         }
+
+
+
+
     }
 }

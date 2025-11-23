@@ -6,8 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using static coding_tracker.Enums;
 using static coding_tracker.DataController;
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
 
 namespace coding_tracker
 {
