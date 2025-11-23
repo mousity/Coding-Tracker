@@ -23,14 +23,25 @@ namespace coding_tracker
             {
                 AnsiConsole.MarkupLine("Adding a coding session. Please input the [green]start date[/] and [cyan]time[/] of the session (YYYY-MM-DD HH:MM):");
                 AnsiConsole.MarkupLine("Type [red]0[/] to go back to the main menu");
-                startTime = ParseDateTime(AnsiConsole.Ask<string>("Start Date and Time: "));
+                var input = AnsiConsole.Ask<string>("End Date and Time: ");
+                if (input.Trim() == "0")
+                {
+                    return;
+                }
+                startTime = ParseDateTime(input);
+                
             }
 
             while(endTime == null)
             {
                 AnsiConsole.MarkupLine("Please input the [green]end date[/] and [cyan]time[/] of the session (YYYY-MM-DD HH:MM):");
                 AnsiConsole.MarkupLine("Type [red]0[/] to go back to the main menu");
-                endTime = ParseDateTime(AnsiConsole.Ask<string>("End Date and Time: "));
+                var input = AnsiConsole.Ask<string>("End Date and Time: ");
+                if(input.Trim() == "0")
+                {
+                    return;
+                }
+                endTime = ParseDateTime(input);
             }
         }
 
