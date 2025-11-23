@@ -86,7 +86,7 @@ namespace coding_tracker
 
         internal DateTime? GetStartTime(DateTime? startTime)
         {
-            AnsiConsole.MarkupLine("Adding a coding session. Please input the [green]start date[/] and [cyan]time[/] of the session (YYYY-MM-DD HH:MM):");
+            AnsiConsole.MarkupLine("Please input the [green]start date[/] and [cyan]time[/] of the session (YYYY-MM-DD HH:MM):");
             AnsiConsole.MarkupLine("Type [red]0[/] to go back to the main menu");
             var input = AnsiConsole.Ask<string>("Start Date and Time: ");
 
@@ -97,7 +97,7 @@ namespace coding_tracker
 
         internal DateTime? GetEndTime(DateTime? endTime)
         {
-            AnsiConsole.MarkupLine("Adding a coding session. Please input the [green]end date[/] and [cyan]time[/] of the session (YYYY-MM-DD HH:MM):");
+            AnsiConsole.MarkupLine("Please input the [green]end date[/] and [cyan]time[/] of the session (YYYY-MM-DD HH:MM):");
             AnsiConsole.MarkupLine("Type [red]0[/] to go back to the main menu");
             var input = AnsiConsole.Ask<string>("End Date and Time: ");
 
@@ -165,6 +165,58 @@ namespace coding_tracker
         internal void UpdateSession()
         {
             // Implementation for updating a session will go here
+            ViewAllSessions();
+            int sessionId = AnsiConsole.Ask<int>("Enter the ID of the session to update: ");
+
+            using var connection = new SQLiteConnection(connectionString);
+            var sqlSelect = "SELECT * FROM coding_tracker WHERE Id = @Id";
+            var session = connection.QueryFirstOrDefault<CodingSession>(sqlSelect, new { Id = sessionId });
+
+            if(session == null)
+            {
+                AnsiConsole.MarkupLine($"[red]No session found with ID {sessionId}.[/]");
+                return;
+            }
+
+            DateTime? startTime = null;
+            DateTime? endTime = null;
+
+            Console.Clear();
+
+            // While startTime is null, keep prompting the user for input
+            while (startTime == null)
+            {
+                Console.WriteLine("Current Start Time: " + session.StartTime);
+                Console.WriteLine("Entering new start time");
+                startTime = GetStartTime(startTime);
+                if (startTime == DateTime.MinValue) { return; }
+            }
+
+            // While endTime is null, keep prompting the user for input
+            while (endTime == null)
+            {
+                Console.WriteLine("Current End Time: " + session.StartTime);
+                Console.WriteLine("Entering new end time");
+                endTime = GetEndTime(endTime);
+                if (endTime == DateTime.MinValue) { return; }
+            }
+
+            // Validate that endTime is after startTime
+            if (endTime.Value < startTime.Value)
+            {
+                Console.WriteLine("End time, " + endTime.Value + " must be after start time, " + startTime.Value + ". Please try again.");
+                Console.ReadKey();
+                return;
+            }
+
+            // Calculate duration in minutes
+            var duration = Convert.ToInt32((endTime.Value - startTime.Value).TotalMinutes);
+            var rows = connection.Execute(
+                      "UPDATE coding_tracker SET StartTime=@Start, EndTime=@End, Duration=@Duration WHERE Id=@Id;",
+                      new { Start = startTime.Value.ToString(dateTimeFormat, inv),
+                          End = endTime.Value.ToString(dateTimeFormat, inv),
+                          Duration = duration,
+                          Id = sessionId });
 
         }
 
