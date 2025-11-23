@@ -23,7 +23,7 @@ namespace coding_tracker
             {
                 AnsiConsole.MarkupLine("Adding a coding session. Please input the [green]start date[/] and [cyan]time[/] of the session (YYYY-MM-DD HH:MM):");
                 AnsiConsole.MarkupLine("Type [red]0[/] to go back to the main menu");
-                var input = AnsiConsole.Ask<string>("End Date and Time: ");
+                var input = AnsiConsole.Ask<string>("Start Date and Time: ");
                 if (input.Trim() == "0")
                 {
                     return;
@@ -34,7 +34,7 @@ namespace coding_tracker
 
             while(endTime == null)
             {
-                AnsiConsole.MarkupLine("Please input the [green]end date[/] and [cyan]time[/] of the session (YYYY-MM-DD HH:MM):");
+                AnsiConsole.MarkupLine("\nPlease input the [green]end date[/] and [cyan]time[/] of the session (YYYY-MM-DD HH:MM):");
                 AnsiConsole.MarkupLine("Type [red]0[/] to go back to the main menu");
                 var input = AnsiConsole.Ask<string>("End Date and Time: ");
                 if(input.Trim() == "0")
@@ -43,6 +43,16 @@ namespace coding_tracker
                 }
                 endTime = ParseDateTime(input);
             }
+
+            if (endTime.Value > startTime.Value)
+            {
+                Console.WriteLine(startTime.Value + " is your start time and " + endTime.Value + " is your end time");
+            } else
+            {
+                Console.WriteLine("End time, " + endTime.Value + " must be after start time, " + startTime.Value + ". Please try again.");
+            }
+            
+            var duration = Convert.ToInt32((endTime.Value - startTime.Value).TotalMinutes);
         }
 
         internal DateTime? ParseDateTime(string input)
