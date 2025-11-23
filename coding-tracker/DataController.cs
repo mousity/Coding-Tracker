@@ -96,26 +96,40 @@ namespace coding_tracker
         // Method to view all coding sessions
         internal void ViewAllSessions()
         {
-            // Implementation for viewing all sessions will go here
+            Console.Clear();
+            // Create a table to display the sessions
             var table = new Table();
-            table.AddColumn("ID");
-            table.AddColumn("Start Time");
-            table.AddColumn("End Time");
-            table.AddColumn("Duration (minutes)");
+            table.Border = TableBorder.Rounded;
+            table.AddColumn("[yellow]ID[/]");
+            table.AddColumn("[yellow]Start Time[/]");
+            table.AddColumn("[yellow]End Time[/]");
+            table.AddColumn("[yellow]Duration (minutes)[/]");
 
+            // Get all sessions from the database
             using var connection = new SQLiteConnection(connectionString);
             var sql = "SELECT * FROM coding_tracker";
-            var sessions = connection.Query(sql).ToList(); // FIX: Call ToList() as a method
+            // Execute the query and map results to CodingSession objects
+            var sessions = connection.Query<CodingSession>(sql).ToList();
 
+            // Add each session to the table
             foreach (var session in sessions)
             {
-                Console.WriteLine(session);
+                table.AddRow(
+                    $"[cyan]{session.Id.ToString()}[/]",
+                    $"[cyan]{session.StartTime}[/]",
+                    $"[cyan]{session.EndTime}[/]",
+                    $"[cyan]{session.Duration.ToString()}[/]"
+                );
             }
+
+            // Render the table to the console
+            AnsiConsole.Write(table);
         }
 
         // Method to delete a coding session
         internal void DeleteSession()
         {
+            ViewAllSessions();
             var sessionId = AnsiConsole.Ask<int>("Enter the ID of the session to delete: ");
 
             using var connection = new SQLiteConnection(connectionString);
@@ -139,6 +153,15 @@ namespace coding_tracker
         {
             // Implementation for updating a session will go here
 
+        }
+
+        // Class to represent a coding session
+        internal sealed class CodingSession
+        {
+            public int Id { get; set; }
+            public string StartTime { get; set; }
+            public string EndTime { get; set; }
+            public int Duration { get; set; }
         }
     }
 }
