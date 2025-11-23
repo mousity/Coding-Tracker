@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Dapper;
 using System.Globalization;
 using Spectre.Console;
+using System.Configuration;
+using System.Data.SQLite;
 
 namespace coding_tracker
 {
@@ -53,6 +55,16 @@ namespace coding_tracker
             }
             
             var duration = Convert.ToInt32((endTime.Value - startTime.Value).TotalMinutes);
+
+            string? connectionString = ConfigurationManager.AppSettings["ConnectionString"];
+            var inv = CultureInfo.InvariantCulture;
+            using var connection = new SQLiteConnection(connectionString);
+
+            var sql = "INSERT INTO coding_tracker (StartTime, EndTime, Duration) VALUES (@StartTime, @EndTime, @Duration)";
+            connection.Execute(sql, new { StartTime = startTime.Value.ToString(dateTimeFormat, inv),
+                                            EndTime = endTime.Value.ToString(dateTimeFormat, inv),
+                                            Duration = duration});
+
         }
 
         internal DateTime? ParseDateTime(string input)
