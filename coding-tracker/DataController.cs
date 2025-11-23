@@ -29,24 +29,15 @@ namespace coding_tracker
             // While startTime is null, keep prompting the user for input
             while (startTime == null)
             {
-                AnsiConsole.MarkupLine("Adding a coding session. Please input the [green]start date[/] and [cyan]time[/] of the session (YYYY-MM-DD HH:MM):");
-                AnsiConsole.MarkupLine("Type [red]0[/] to go back to the main menu");
-                var input = AnsiConsole.Ask<string>("Start Date and Time: ");
-
-                if (input.Trim() == "0") { return; } // If user inputs '0', return to main menu
-                startTime = ParseDateTime(input); // Try to parse the input
-
+                startTime = GetStartTime(startTime);
+                if(startTime == DateTime.MinValue) { return; }
             }
 
             // While endTime is null, keep prompting the user for input
             while (endTime == null)
             {
-                AnsiConsole.MarkupLine("\nPlease input the [green]end date[/] and [cyan]time[/] of the session (YYYY-MM-DD HH:MM):");
-                AnsiConsole.MarkupLine("Type [red]0[/] to go back to the main menu");
-                var input = AnsiConsole.Ask<string>("End Date and Time: ");
-
-                if (input.Trim() == "0") { return; } // If user inputs '0', return to main menu
-                endTime = ParseDateTime(input); // Try to parse the input
+                endTime = GetEndTime(endTime);
+                if(endTime == DateTime.MinValue) { return; }
             }
 
             // Validate that endTime is after startTime
@@ -91,6 +82,28 @@ namespace coding_tracker
                 return null;
             }
             return parsedDateTime;
+        }
+
+        internal DateTime? GetStartTime(DateTime? startTime)
+        {
+            AnsiConsole.MarkupLine("Adding a coding session. Please input the [green]start date[/] and [cyan]time[/] of the session (YYYY-MM-DD HH:MM):");
+            AnsiConsole.MarkupLine("Type [red]0[/] to go back to the main menu");
+            var input = AnsiConsole.Ask<string>("Start Date and Time: ");
+
+            if (input.Trim() == "0") { return DateTime.MinValue; } // If user inputs '0', return to main menu
+            startTime = ParseDateTime(input); // Try to parse the input
+            return startTime;
+        }
+
+        internal DateTime? GetEndTime(DateTime? endTime)
+        {
+            AnsiConsole.MarkupLine("Adding a coding session. Please input the [green]end date[/] and [cyan]time[/] of the session (YYYY-MM-DD HH:MM):");
+            AnsiConsole.MarkupLine("Type [red]0[/] to go back to the main menu");
+            var input = AnsiConsole.Ask<string>("End Date and Time: ");
+
+            if (input.Trim() == "0") { return DateTime.MinValue; } // If user inputs '0', return to main menu
+            endTime = ParseDateTime(input); // Try to parse the input
+            return endTime;
         }
 
         // Method to view all coding sessions
