@@ -44,7 +44,7 @@ namespace coding_tracker
                 AnsiConsole.MarkupLine("Type [red]0[/] to go back to the main menu");
                 var input = AnsiConsole.Ask<string>("End Date and Time: ");
 
-                if(input.Trim() == "0") { return; } // If user inputs '0', return to main menu
+                if (input.Trim() == "0") { return; } // If user inputs '0', return to main menu
                 endTime = ParseDateTime(input); // Try to parse the input
             }
 
@@ -66,9 +66,12 @@ namespace coding_tracker
             // The SQL insert statement
             var sql = "INSERT INTO coding_tracker (StartTime, EndTime, Duration) VALUES (@StartTime, @EndTime, @Duration)";
             // The actual execution of the insert statement
-            connection.Execute(sql, new { StartTime = startTime.Value.ToString(dateTimeFormat, inv),
-                                            EndTime = endTime.Value.ToString(dateTimeFormat, inv),
-                                            Duration = duration});
+            connection.Execute(sql, new
+            {
+                StartTime = startTime.Value.ToString(dateTimeFormat, inv),
+                EndTime = endTime.Value.ToString(dateTimeFormat, inv),
+                Duration = duration
+            });
 
         }
 
@@ -90,5 +93,20 @@ namespace coding_tracker
             return parsedDateTime;
         }
 
+        internal void ViewAllSessions()
+        {
+            // Implementation for viewing all sessions will go here
+        }
+
+        internal void DeleteSession()
+        {
+            // Implementation for deleting a session will go here
+        }
+
+        internal void UpdateSession()
+        {
+            // Implementation for updating a session will go here
+
+        }
     }
 }
