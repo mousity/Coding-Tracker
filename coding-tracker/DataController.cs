@@ -97,6 +97,20 @@ namespace coding_tracker
         internal void ViewAllSessions()
         {
             // Implementation for viewing all sessions will go here
+            var table = new Table();
+            table.AddColumn("ID");
+            table.AddColumn("Start Time");
+            table.AddColumn("End Time");
+            table.AddColumn("Duration (minutes)");
+
+            using var connection = new SQLiteConnection(connectionString);
+            var sql = "SELECT * FROM coding_tracker";
+            var sessions = connection.Query(sql).ToList(); // FIX: Call ToList() as a method
+
+            foreach (var session in sessions)
+            {
+                Console.WriteLine(session);
+            }
         }
 
         // Method to delete a coding session

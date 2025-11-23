@@ -31,6 +31,7 @@ namespace coding_tracker
                 {
                     case MenuOptions.ViewAllCodingSessions:
                         // View all coding sessions
+                        _controller.ViewAllSessions();
                         break;
                     case MenuOptions.AddCodingSession:
                         // Add a coding session
