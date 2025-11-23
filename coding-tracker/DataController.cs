@@ -15,6 +15,7 @@ namespace coding_tracker
     internal class DataController
     {
         private const string dateTimeFormat = "yyyy-MM-dd HH:mm";
+        public static readonly string? connectionString = ConfigurationManager.AppSettings["ConnectionString"];
         private static readonly CultureInfo inv = CultureInfo.InvariantCulture; // Invariant culture for consistent date formatting
 
         // Method to add a coding session
@@ -60,7 +61,6 @@ namespace coding_tracker
             var duration = Convert.ToInt32((endTime.Value - startTime.Value).TotalMinutes);
 
             // Get connection string from config
-            string? connectionString = ConfigurationManager.AppSettings["ConnectionString"];
             using var connection = new SQLiteConnection(connectionString); // SQLite connection (Dapper does not require manual open/close)
 
             // The SQL insert statement
@@ -93,16 +93,34 @@ namespace coding_tracker
             return parsedDateTime;
         }
 
+        // Method to view all coding sessions
         internal void ViewAllSessions()
         {
             // Implementation for viewing all sessions will go here
         }
 
+        // Method to delete a coding session
         internal void DeleteSession()
         {
-            // Implementation for deleting a session will go here
+            var sessionId = AnsiConsole.Ask<int>("Enter the ID of the session to delete: ");
+
+            using var connection = new SQLiteConnection(connectionString);
+            var sql = "DELETE FROM coding_tracker WHERE Id = @Id";
+            var rows = connection.Execute(sql, new { Id = sessionId });
+
+            if(rows > 0)
+            {
+                AnsiConsole.MarkupLine($"[green]Session with ID {sessionId} deleted successfully.[/]");
+            }
+            else
+            {
+                AnsiConsole.MarkupLine($"[red]No session found with ID {sessionId}.[/]");
+            }
+
+            return;
         }
 
+        // Method to update a coding session
         internal void UpdateSession()
         {
             // Implementation for updating a session will go here

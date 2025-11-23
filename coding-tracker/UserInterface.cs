@@ -38,6 +38,7 @@ namespace coding_tracker
                         break;
                     case MenuOptions.DeleteCodingSession:
                         // Delete a coding session
+                        _controller.DeleteSession();
                         break;
                     case MenuOptions.UpdateCodingSession:
                         // Update a coding session
