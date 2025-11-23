@@ -14,10 +14,8 @@ namespace coding_tracker
 
     internal class DataController
     {
-
         private const string dateTimeFormat = "yyyy-MM-dd HH:mm";
         private static readonly CultureInfo inv = CultureInfo.InvariantCulture; // Invariant culture for consistent date formatting
-
 
         // Method to add a coding session
         internal void AddSession()
