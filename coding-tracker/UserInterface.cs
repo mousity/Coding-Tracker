@@ -43,6 +43,7 @@ namespace coding_tracker
                         break;
                     case MenuOptions.UpdateCodingSession:
                         // Update a coding session
+                        _controller.UpdateSession();
                         break;
                     case MenuOptions.ExitProgram:
                         Console.WriteLine("Goodbye!");
