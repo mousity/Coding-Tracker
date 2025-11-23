@@ -15,37 +15,40 @@ namespace coding_tracker
     {
         const string dateTimeFormat = "yyyy-MM-dd HH:mm";
 
+        // Method to add a coding session
         internal void AddSession()
         {
             DateTime? startTime = null;
             DateTime? endTime = null;
 
-            // Implementation for adding a coding session
+            // While startTime is null, keep prompting the user for input
             while (startTime == null)
             {
                 AnsiConsole.MarkupLine("Adding a coding session. Please input the [green]start date[/] and [cyan]time[/] of the session (YYYY-MM-DD HH:MM):");
                 AnsiConsole.MarkupLine("Type [red]0[/] to go back to the main menu");
                 var input = AnsiConsole.Ask<string>("Start Date and Time: ");
-                if (input.Trim() == "0")
+                if (input.Trim() == "0") // If user inputs '0', return to main menu
                 {
                     return;
                 }
-                startTime = ParseDateTime(input);
-                
+                startTime = ParseDateTime(input); // Try to parse the input
+
             }
 
-            while(endTime == null)
+            // While endTime is null, keep prompting the user for input
+            while (endTime == null)
             {
                 AnsiConsole.MarkupLine("\nPlease input the [green]end date[/] and [cyan]time[/] of the session (YYYY-MM-DD HH:MM):");
                 AnsiConsole.MarkupLine("Type [red]0[/] to go back to the main menu");
                 var input = AnsiConsole.Ask<string>("End Date and Time: ");
-                if(input.Trim() == "0")
+                if(input.Trim() == "0") // If user inputs '0', return to main menu
                 {
                     return;
                 }
-                endTime = ParseDateTime(input);
+                endTime = ParseDateTime(input); // Try to parse the input
             }
 
+            // Validate that endTime is after startTime
             if (endTime.Value > startTime.Value)
             {
                 Console.WriteLine(startTime.Value + " is your start time and " + endTime.Value + " is your end time");
@@ -53,14 +56,18 @@ namespace coding_tracker
             {
                 Console.WriteLine("End time, " + endTime.Value + " must be after start time, " + startTime.Value + ". Please try again.");
             }
-            
+
+            // Calculate duration in minutes
             var duration = Convert.ToInt32((endTime.Value - startTime.Value).TotalMinutes);
 
+            // Get connection string from config
             string? connectionString = ConfigurationManager.AppSettings["ConnectionString"];
-            var inv = CultureInfo.InvariantCulture;
-            using var connection = new SQLiteConnection(connectionString);
+            var inv = CultureInfo.InvariantCulture; // Invariant culture for consistent date formatting
+            using var connection = new SQLiteConnection(connectionString); // SQLite connection (Dapper does not require manual open/close)
 
+            // The SQL insert statement
             var sql = "INSERT INTO coding_tracker (StartTime, EndTime, Duration) VALUES (@StartTime, @EndTime, @Duration)";
+            // The actual execution of the insert statement
             connection.Execute(sql, new { StartTime = startTime.Value.ToString(dateTimeFormat, inv),
                                             EndTime = endTime.Value.ToString(dateTimeFormat, inv),
                                             Duration = duration});
@@ -84,9 +91,6 @@ namespace coding_tracker
             }
             return parsedDateTime;
         }
-
-
-
 
     }
 }
