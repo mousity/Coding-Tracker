@@ -110,6 +110,27 @@ namespace coding_tracker
         internal void ViewAllSessions()
         {
             Console.Clear();
+            var choice = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Would you like to filter your coding session by date?")
+                    .AddChoices("Ascending", "Descending", "No", "Back to menu"));
+
+            var sql = "";
+            switch (choice){
+                case "Ascending":
+                   sql = "SELECT * FROM coding_tracker ORDER BY StartTime ASC";
+                    break;
+                case "Descending":
+                    sql = "SELECT * FROM coding_tracker ORDER BY StartTime DESC";
+                    break;
+                case "No":
+                    sql = "SELECT * FROM coding_tracker";
+                    break;
+                case "Back to menu":
+                    return; 
+            }
+
+
             // Create a table to display the sessions
             var table = new Table();
             table.Border = TableBorder.Rounded;
@@ -120,7 +141,7 @@ namespace coding_tracker
 
             // Get all sessions from the database
             using var connection = new SQLiteConnection(connectionString);
-            var sql = "SELECT * FROM coding_tracker";
+            //var sql = "SELECT * FROM coding_tracker";
             // Execute the query and map results to CodingSession objects
             var sessions = connection.Query<CodingSession>(sql).ToList();
 
